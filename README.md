@@ -85,6 +85,8 @@ GPIOA_ODR:      0x40020014
    - Bare metal implementation
    - Efficient code execution
 
+
+
 3. **Const Correctness**
    - Uses const pointers for register addresses
    - Prevents accidental address modification
@@ -92,3 +94,8 @@ GPIOA_ODR:      0x40020014
 4. **Volatile Correctness**
    - Proper volatile declarations for hardware registers
    - Prevents compiler optimization issues
+
+https://github.com/user-attachments/assets/725d7c5c-bd8a-4f6f-87c3-cb042c14c8c8
+
+https://github.com/user-attachments/assets/f3411308-0a1c-41a3-b81f-989eb9ccb46a
+
