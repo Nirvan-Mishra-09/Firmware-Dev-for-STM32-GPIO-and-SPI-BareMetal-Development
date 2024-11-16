@@ -11,7 +11,7 @@ This project implements a simple LED blinking mechanism using structured bit-fie
 
 ## Hardware Requirements
 
-- STM32F4 Discovery Board
+- STM32F4 Nucleo Board
 - Onboard LED connected to PA5
 
 ## Code Structure
