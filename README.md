@@ -1,4 +1,4 @@
-# Firmware-Dev-for-STM32-GPIO-aand-SPI-bareMetal-Programming
+# Firmware Dev for STM32 GPIO and SPI bareMetal Programming
 
 
 # STM32F4 LED Blink - Bare Metal Implementation
