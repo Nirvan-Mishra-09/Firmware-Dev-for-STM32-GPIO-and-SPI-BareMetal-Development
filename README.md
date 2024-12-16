@@ -111,7 +111,7 @@ typedef struct {
 
 3. **Test**:
    - Test basic GPIO functionality like toggling the onboard LED using PA5.
-   - Connecting an External LED at PB9 pin -> 
+   - Connecting an External LED at PB9 pin -> LED_toggle.mp4
    - Connecting an External LED with Extenal button, and toggling when this button is pressed -> LED_toggle_with_ext_button.mp4
    - Extend with interrupt-driven GPIO to explore more advanced use cases.
 
