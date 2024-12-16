@@ -32,7 +32,7 @@ This project implements a GPIO driver for the STM32F401RE microcontroller, offer
 ## Hardware Requirements
 
 - STM32F401RE Nucleo Board
-- Onboard LED connected to **PA5** for testing GPIO output functionality.
+- STM32 cube IDE
 
 ## Code Structure
 
@@ -111,6 +111,8 @@ typedef struct {
 
 3. **Test**:
    - Test basic GPIO functionality like toggling the onboard LED using PA5.
+   - Connecting an External LED at PB9 pin.
+   - Connecting an External LED with Extenal button, and toggling when this button is pressed.
    - Extend with interrupt-driven GPIO to explore more advanced use cases.
 
 ## Key Concepts
