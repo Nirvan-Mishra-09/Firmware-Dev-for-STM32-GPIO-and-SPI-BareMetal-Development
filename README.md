@@ -111,8 +111,8 @@ typedef struct {
 
 3. **Test**:
    - Test basic GPIO functionality like toggling the onboard LED using PA5.
-   - Connecting an External LED at PB9 pin.  https://github.com/user-attachments/assets/c5601b30-f60c-4f10-9163-cbd7d902f9b9
-   - Connecting an External LED with Extenal button, and toggling when this button is pressed. https://github.com/user-attachments/assets/df33de3c-b637-42cb-9ee9-ab09d670fe41
+   - Connecting an External LED at PB9 pin.  
+   - Connecting an External LED with Extenal button, and toggling when this button is pressed. 
    - Extend with interrupt-driven GPIO to explore more advanced use cases.
 
 ## Key Concepts
@@ -141,5 +141,14 @@ typedef struct {
 
 3. **Interrupt Support**:
    - Seamlessly handle external interrupts for GPIO pins.
+
+
+
+https://github.com/user-attachments/assets/cbc84dc1-37a7-4353-8210-86a114f5a6ce
+
+
+
+https://github.com/user-attachments/assets/29efc48c-a821-4da1-baab-65b479ec1b56
+
 
 
