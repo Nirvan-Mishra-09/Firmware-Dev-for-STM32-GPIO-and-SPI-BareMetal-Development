@@ -28,6 +28,12 @@ This project implements a GPIO driver for the STM32F401RE microcontroller, offer
 - **Bare-Metal Programming**:
   - Direct register manipulation for maximum control and efficiency.
   - Minimal reliance on pre-defined libraries or HAL.
+    
+## Directory Structure
+```
+stm32f4xx_drivers\drivers\inc  // Contains all driver header files
+stm32f4xx_drivers\drivers\src  // Contains test and implementation files
+```
 
 ## Hardware Requirements
 
