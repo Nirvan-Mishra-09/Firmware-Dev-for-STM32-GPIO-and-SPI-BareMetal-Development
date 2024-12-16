@@ -1,101 +1,143 @@
 # Firmware Dev for STM32 GPIO and SPI bareMetal Programming
 
 
-# STM32F4 LED Blink - Bare Metal Implementation
+# STM32 GPIO Driver Development - Bare Metal Programming
 
-A bare metal implementation of LED blinking for STM32F4 microcontroller using bit-field structures. This project demonstrates register-level programming without using HAL or any external frameworks.
+A custom GPIO driver implementation for the STM32F401RE Nucleo Board using **bare-metal programming** techniques. This project demonstrates a low-level approach to peripheral control by directly manipulating hardware registers, without relying on external frameworks like HAL or CMSIS.
 
 ## Project Overview
 
-This project implements a simple LED blinking mechanism using structured bit-field approach for register access. The implementation focuses on clean, maintainable code using proper C structures for register manipulation.
+This project implements a GPIO driver for the STM32F401RE microcontroller, offering APIs for configuring, reading, and writing to GPIO pins. The implementation emphasizes a clear structure, portability, and efficient hardware interaction.
+
+## Features
+
+- **Pin Configuration**:
+  - Supports Input, Output, Alternate Function, and Analog modes.
+  - Configurable Pull-Up/Pull-Down resistors.
+  - Push-Pull and Open-Drain output types.
+  - Slew rate control for pin speed: Low, Medium, High, or Very High speed.
+
+- **APIs**:
+  - Enable or disable peripheral clock.
+  - Initialize and deinitialize GPIO pins.
+  - Read input pin or port state.
+  - Write to output pin or port.
+  - Toggle output pins.
+  - Configure interrupts for GPIO pins and handle ISRs.
+
+- **Bare-Metal Programming**:
+  - Direct register manipulation for maximum control and efficiency.
+  - Minimal reliance on pre-defined libraries or HAL.
 
 ## Hardware Requirements
 
-- STM32F4 Nucleo Board
-- Onboard LED connected to PA5
+- STM32F401RE Nucleo Board
+- Onboard LED connected to **PA5** for testing GPIO output functionality.
 
 ## Code Structure
 
-### Register Definitions
-The project uses structured bit-fields for clear register access:
+### Peripheral Registers
+
+The project uses detailed bit-field structures for register manipulation:
 
 ```c
-typedef struct{
-    uint32_t gpioa_en:1;
-    uint32_t gpiob_en:1;
-    uint32_t gpioc_en:1;
-    // ... other bits
-} RCC_AHB1ENR_t;
-
-typedef struct{
-    uint32_t pin_0:2;
-    uint32_t pin_1:2;
-    // ... other pins
-    uint32_t pin_5:2;
-    // ... remaining pins
-} GPIOx_MODER_t;
-
-typedef struct{
-    uint32_t pin_0:1;
-    uint32_t pin_1:1;
-    // ... other pins
-    uint32_t pin_5:1;
-    // ... remaining pins
-    uint32_t reserved:16;
-} GPIOx_ODR_t;
+typedef struct {
+    uint32_t MODER;    // GPIO mode register
+    uint32_t OTYPER;   // GPIO output type register
+    uint32_t OSPEEDR;  // GPIO output speed register
+    uint32_t PUPDR;    // GPIO pull-up/pull-down register
+    uint32_t IDR;      // GPIO input data register
+    uint32_t ODR;      // GPIO output data register
+    uint32_t BSRR;     // GPIO bit set/reset register
+    uint32_t LCKR;     // GPIO configuration lock register
+    uint32_t AFR[2];   // GPIO alternate function registers
+} GPIO_RegDef_t;
 ```
 
-### Memory Map
-```c
-RCC_AHB1ENR:    0x40023830
-GPIOA_MODER:    0x40020000
-GPIOA_ODR:      0x40020014
-```
+### GPIO Pin Modes
 
-## Implementation Details
+| Mode               | Configuration Code |
+|--------------------|--------------------|
+| Input              | `00`              |
+| General Output     | `01`              |
+| Alternate Function | `10`              |
+| Analog Mode        | `11`              |
 
-1. **Clock Configuration**
+### GPIO Output Types
+
+| Output Type | Description            |
+|-------------|------------------------|
+| Push-Pull   | Standard configuration |
+| Open-Drain  | Output pulls to ground |
+
+### APIs Implemented
+
+1. **Clock Control**:
    ```c
-   RCC_AHB1ENR_t volatile *const pClkCtrlReg = (RCC_AHB1ENR_t*)0x40023830;
-   pClkCtrlReg->gpioa_en = 1;
+   void GPIO_PeriClockControl(GPIO_RegDef_t *pGPIOx, uint8_t EnOrDi);
    ```
 
-2. **GPIO Configuration**
+2. **GPIO Initialization**:
    ```c
-   GPIOx_MODER_t volatile *const pPortAModeReg = (GPIOx_MODER_t*)0x40020000;
-   pPortAModeReg->pin_5 = 1;  // Set as output
+   void GPIO_Init(GPIO_Handle_t *pGPIOHandle);
+   void GPIO_DeInit(GPIO_RegDef_t *pGPIOx);
    ```
 
-3. **LED Control**
+3. **Data Read/Write**:
    ```c
-   GPIOx_ODR_t volatile *const pGPIOAoutReg = (GPIOx_ODR_t*)0x40020014;
-   pGPIOAoutReg->pin_5 = 1;  // LED ON
-   pGPIOAoutReg->pin_5 = 0;  // LED OFF
+   uint8_t GPIO_ReadFromInputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber);
+   uint16_t GPIO_ReadFromInputPort(GPIO_RegDef_t *pGPIOx);
+   void GPIO_WriteToOutputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber, uint8_t Value);
+   void GPIO_WriteToOutputPort(GPIO_RegDef_t *pGPIOx, uint16_t Value);
+   void GPIO_ToggleOutputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber);
    ```
 
-## Key Features
+4. **Interrupt Configuration**:
+   ```c
+   void GPIO_IRQInterruptConfig(uint8_t IRQNumber, uint8_t EnOrDi);
+   void GPIO_IRQPriorityConfig(uint8_t IRQNumber, uint32_t IRQPriority);
+   void GPIO_IRQHandling(uint8_t PinNumber);
+   ```
 
-1. **Structured Register Access**
-   - Uses bit-fields for clear register manipulation
-   - Type-safe register access
-   - Self-documenting code structure
+## How to Run
 
-2. **Direct Register Manipulation**
-   - No HAL dependencies
-   - Bare metal implementation
-   - Efficient code execution
+1. **Setup**:
+   - Use the STM32F401RE Nucleo Board.
+   - Connect an LED to GPIO pin PA5 for testing.
 
+2. **Build and Flash**:
+   - Use a toolchain like **Keil**, **STM32CubeIDE**, or **Makefile + ARM GCC**.
+   - Flash the generated binary to the Nucleo board.
 
+3. **Test**:
+   - Test basic GPIO functionality like toggling the onboard LED using PA5.
+   - Extend with interrupt-driven GPIO to explore more advanced use cases.
 
-3. **Const Correctness**
-   - Uses const pointers for register addresses
-   - Prevents accidental address modification
+## Key Concepts
 
-4. **Volatile Correctness**
-   - Proper volatile declarations for hardware registers
-   - Prevents compiler optimization issues
+- **Peripheral Clock Control**:
+  Ensures that the GPIO peripheral is enabled via the RCC registers before configuration.
+  
+- **Push-Pull vs. Open-Drain**:
+  Push-pull allows output to both high and low states, while open-drain only pulls to low.
 
-https://github.com/user-attachments/assets/725d7c5c-bd8a-4f6f-87c3-cb042c14c8c8
+- **Pull-Up/Pull-Down**:
+  Configures pins to default to a high or low state to avoid floating conditions.
 
-https://github.com/user-attachments/assets/f3411308-0a1c-41a3-b81f-989eb9ccb46a
+- **Interrupt Handling**:
+  Configures EXTI lines to trigger ISRs for edge-detection on GPIO pins.
+
+## Highlights
+
+1. **Efficient Register Access**:
+   - Direct manipulation for low overhead.
+   - Bitwise operations for precise control.
+
+2. **Robust Driver Design**:
+   - Modular and reusable APIs.
+   - Comprehensive initialization and deinitialization routines.
+
+3. **Interrupt Support**:
+   - Seamlessly handle external interrupts for GPIO pins.
+
 
