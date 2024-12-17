@@ -1,4 +1,4 @@
-# Firmware Dev for STM32 GPIO and SPI bareMetal Programming
+# Firmware Dev for STM32 GPIO and SPI bareMetal Programming (In Progress)
 
 
 # STM32 GPIO Driver Development - Bare Metal Programming
