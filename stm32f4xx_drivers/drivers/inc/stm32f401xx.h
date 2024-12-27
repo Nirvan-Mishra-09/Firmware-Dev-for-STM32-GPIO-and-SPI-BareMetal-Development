@@ -9,6 +9,35 @@
 #define INC_STM32F401XX_H_
 #include <stdint.h>
 #define __vo volatile
+
+/*----------------------------------------------------Processor specific MACROS----------------------------------------------------------------*/
+
+/*NVIC ISERx Register BASEADDR*/
+#define NVIC_ISER0		((__vo uint32_t*)0xE000E100)
+#define NVIC_ISER1		((__vo uint32_t*)0xE000E104)
+#define NVIC_ISER2		((__vo uint32_t*)0xE000E108)
+#define NVIC_ISER3		((__vo uint32_t*)0xE000E10C)
+
+/*NVIC ICERx Register BASEADDR*/
+#define NVIC_ICER0		((__vo uint32_t*)0xE000E180)
+#define NVIC_ICER1		((__vo uint32_t*)0xE000E184)
+#define NVIC_ICER2		((__vo uint32_t*)0xE000E188)
+#define NVIC_ICER3		((__vo uint32_t*)0xE000E18C)
+
+/*interrupt Priority Registers */
+#define NVIC_PR_BASE_ADDR	((__vo uint32_t*)0xE000E400)
+#define NO_PR_BITS_IMPLEMENTED 4
+
+/*IRQ numbers for EXTI lines*/
+#define IRQ_EXTI0		6
+#define IRQ_EXTI1		7
+#define IRQ_EXTI2		8
+#define IRQ_EXTI3		9
+#define IRQ_EXTI4		10
+#define IRQ_EXTI9_5		23
+#define IRQ_EXTI15_10	40
+
+
 /*
  * Base addresses of SRAM and FLASH Memories
  * */
@@ -16,6 +45,9 @@
 #define SRAM1_BASEADDR		0x20000000U /*SRAM base address*/
 #define ROM_BASEADDR		0x1FFF0000U	/*System Memory or ROM Base address*/
 #define SRAM 				SRAM1_BASEADDR
+
+
+/*--------------------------------------------------MCU Peripheral Specific MACROS------------------------------------------------------------*/
 
 /*
  * Base addresses of Peripheral Bus (APBx, AHBX)
@@ -79,6 +111,30 @@ typedef struct{
 	__vo uint32_t AFR[2]; 			/*GPIO port AFR[0], AFR[1]- low,high -> Address offset: 0x20 - 0x24*/
 }GPIO_RegDef_t;
 
+/*
+ * Defining the EXTIx peripheral registers
+ * */
+
+typedef struct{
+	__vo uint32_t EXTI_IMR;
+	__vo uint32_t EXTI_EMR;
+	__vo uint32_t EXTI_RTSR;
+	__vo uint32_t EXTI_FTSR;
+	__vo uint32_t EXTI_SWIER;
+	__vo uint32_t EXTI_PR;
+}EXTI_RegDef_t;
+
+/*
+ * Defining the SYSCFGx peripheral registers
+ * */
+typedef struct{
+	__vo uint32_t MEMRMP;
+	__vo uint32_t PMC;
+	__vo uint32_t EXTICR[4];
+	uint32_t RESERVED1[2];
+	__vo uint32_t CMPCR;
+}SYSCGF_RegDef_t;
+
 /*SPIx Peripheral registers*/
 
 typedef struct{
@@ -139,7 +195,14 @@ typedef struct{
  * Defining macros for RCC peripheral definition type casted using RCC_RegDef_t
  * */
 #define RCC			((RCC_RegDef_t*)RCC_BASEADDR)
-
+/*
+ * Defining macros for EXTI peripheral definition type casted using RCC_RegDef_t
+ * */
+#define EXTI			((EXTI_RegDef_t*)EXTI_BASEADDR)
+/*
+ * Defining macros for SYSCFG peripheral definition type casted using RCC_RegDef_t
+ * */
+#define SYSCFG			((SYSCGF_RegDef_t*)SYSCFG_BASEADDR)
 /*SPIx type casted using SPI_RegDef_t*/
 #define SPI1 ((SPI_RegDef_t*)(SPI1_BASEADDR))
 #define SPI2 ((SPI_RegDef_t*)(SPI2_BASEADDR))
@@ -246,6 +309,15 @@ typedef struct{
 #define GPIOD_REG_RESET()	do{(RCC->AHB1RSTR |= (1<<3)); (RCC->AHB1RSTR &= ~(1<<3));}while(0)
 #define GPIOE_REG_RESET()	do{(RCC->AHB1RSTR |= (1<<4)); (RCC->AHB1RSTR &= ~(1<<4));}while(0)
 #define GPIOH_REG_RESET()	do{(RCC->AHB1RSTR |= (1<<7)); (RCC->AHB1RSTR &= ~(1<<7));}while(0)
+
+/*Function to implement port code*/
+
+#define GPIO_BASEADDR_TO_CODE(x)	((x == GPIOA)?0:\
+									 (x == GPIOB)?1:\
+									 (x == GPIOC)?2:\
+									 (x == GPIOD)?3:\
+									 (x == GPIOE)?4:\
+									 (x == GPIOH)?7:0)
 
 /*
  * Miscellaneous Macros
